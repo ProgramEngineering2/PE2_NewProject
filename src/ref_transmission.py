@@ -101,13 +101,40 @@ directories = [
     'dat/HY202103/D24/20190603_225101'
 ]
 
-# 모든 XML 파일 경로를 담을 리스트
-xml_files = []
+def find_xml_files(directories):
+    device = input("Device (LMZC, LMZO, or all): ").strip().upper()
+    wafer_no_input = input("Wafer no (D07, D08, D23, D24, or all): ").strip().upper()
+    xml_files = []
 
-# 각 디렉토리마다 'LMZ'가 들어가는 XML 파일만을 찾아서 리스트에 추가
-for directory in directories:
-    file_list = os.listdir(directory)
-    xml_files.extend([os.path.join(directory, file) for file in file_list if 'LMZ' in file and file.endswith(".xml")])
+    if device not in ['LMZC', 'LMZO', 'all']:
+        print("잘못된 device 입력. 'LMZC', 'LMZO', 또는 'all'만 지원됩니다.")
+        return []
+
+    if wafer_no_input == 'all':
+        wafer_nos = ['D07', 'D08', 'D23', 'D24']
+    else:
+        wafer_nos = [wafer_no_input]
+
+    for directory in directories:
+        try:
+            wafer_no = directory.split('/')[2]  # 디렉토리에서 웨이퍼 번호 추출
+            if wafer_no in wafer_nos:
+                file_list = os.listdir(directory)
+                if device == 'LMZC':
+                    xml_files.extend([os.path.join(directory, file) for file in file_list if 'LMZC' in file and file.endswith(".xml")])
+                elif device == 'LMZO':
+                    xml_files.extend([os.path.join(directory, file) for file in file_list if 'LMZO' in file and file.endswith(".xml")])
+                elif device == 'ALL':
+                    xml_files.extend([os.path.join(directory, file) for file in file_list if ('LMZC' in file or 'LMZO' in file) and file.endswith(".xml")])
+        except FileNotFoundError:
+            print(f"디렉토리를 찾을 수 없습니다: {directory}")
+
+    return xml_files
+
+# 모든 XML 파일 경로를 담을 리스트
+xml_files = find_xml_files(directories)
+'''for xml_file in xml_files:
+    print(xml_file)'''
 
 # JPG 파일 저장 디렉토리 생성
 jpgs_directory = os.path.join('res', 'jpgs')
