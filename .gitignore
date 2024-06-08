@@ -3,7 +3,7 @@
 /workspace.xml
 
 # Ignore dat directory
-/dat/
+/HY202103/
 
 # Ignore res directory
 /res/
