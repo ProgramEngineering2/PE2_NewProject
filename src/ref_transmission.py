@@ -69,22 +69,6 @@ def plot_transmission_spectra(ax, root):
     ax.legend(loc='lower left', bbox_to_anchor=(-0.5, -0.5), ncol=4, fontsize='small')
     ax.grid(True)
 
-def plot_and_save_graphs(jpgs_directory, xml_files):
-    for xml_file in xml_files:
-        tree = ET.parse(xml_file)
-        root = tree.getroot()
-
-        # 새로운 그래프 생성
-        plt.figure(figsize=(10, 6))
-        ax = plt.gca()
-
-        # 데이터를 이용하여 그래프 그리기
-        plot_transmission_spectra(ax, root)
-
-        # 그래프 저장
-        filename = os.path.splitext(os.path.basename(xml_file))[0] + '_ref_transmission_spectra.jpg'
-        plt.savefig(os.path.join(jpgs_directory, filename))
-        plt.close()  # 그래프 초기화
 
 # 여러 디렉토리 경로
 directories = [
@@ -130,16 +114,3 @@ def find_xml_files(directories):
             print(f"디렉토리를 찾을 수 없습니다: {directory}")
 
     return xml_files
-
-# 모든 XML 파일 경로를 담을 리스트
-xml_files = find_xml_files(directories)
-'''for xml_file in xml_files:
-    print(xml_file)'''
-
-# JPG 파일 저장 디렉토리 생성
-jpgs_directory = os.path.join('res', 'jpgs')
-if not os.path.exists(jpgs_directory):
-    os.makedirs(jpgs_directory)
-
-# 그래프 생성 및 저장
-plot_and_save_graphs(jpgs_directory, xml_files)
