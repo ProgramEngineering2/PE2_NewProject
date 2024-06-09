@@ -6,6 +6,11 @@ from src.transmission import plot_transmission_spectra_all
 from src.ref_transmission import plot_transmission_spectra
 from src.flat_transmission import plot_flat_transmission_spectra
 import src.pandas_frame
+import numpy as np
+import warnings
+
+# RankWarning 경고 무시
+warnings.simplefilter('ignore', np.RankWarning)
 
 directories = [
     'dat/HY202103/D07/20190715_190855',
@@ -47,7 +52,7 @@ def find_xml_files(directories):
                 elif device == 'LMZO':
                     xml_files.extend([os.path.join(directory, file) for file in file_list if
                                       'LMZO' in file and file.endswith(".xml")])
-                elif device == 'ALL':
+                elif device == 'all':
                     xml_files.extend([os.path.join(directory, file) for file in file_list if
                                       ('LMZC' in file or 'LMZO' in file) and file.endswith(".xml")])
         except FileNotFoundError:
@@ -86,8 +91,12 @@ def main():
         plot_transmission_spectra_all(axs[1, 0], root)
         plot_flat_transmission_spectra(axs[1, 1], root)
 
+        # 파일명에서 9번~12번 글자 추출
+        filename = os.path.basename(xml_file)
+        wafer_id = filename[9:12]
+
         # 파일 경로 설정
-        jpgs_directory = os.path.join('res', 'jpgs')
+        jpgs_directory = os.path.join('res', 'jpgs', wafer_id)
         if not os.path.exists(jpgs_directory):
             os.makedirs(jpgs_directory)
 

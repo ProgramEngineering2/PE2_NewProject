@@ -3,10 +3,11 @@
 /workspace.xml
 
 # Ignore dat directory
-/HY202103/
+/HY202103/D07/
+/HY202103/D08/
+/HY202103/D23/
+/HY202103/D24/
 
-# Ignore res directory
-/res/
 
 # Ignore pycache file and vscode file
 */__pycache__/*
