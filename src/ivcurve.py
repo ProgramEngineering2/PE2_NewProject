@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 import lmfit
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.interpolate import UnivariateSpline
 #
 # IV 데이터를 그래프에 그리는 함수
 def plot_iv_data(ax,root):
@@ -14,10 +15,10 @@ def plot_iv_data(ax,root):
     current_text = iv_measurement_element.find('.//Current').text
 
     # Voltage 및 Current 텍스트 값을 파싱하여 실수형 리스트로 변환
-    voltage_values = [float(value) for value in voltage_text.split(',')]
-    current_values = [float(value) for value in current_text.split(',')]
+    voltage_values = np.array([float(value) for value in voltage_text.split(',')])
+    current_values = np.array([float(value) for value in current_text.split(',')])
+    current_abs = np.abs(current_values)
 
-    # 적합 실행 (알고리즘 변경)
     def diode_equation(V, Is, n, Vt, V_linear, Ilinear):
         current = []
         for v in V:
@@ -28,7 +29,7 @@ def plot_iv_data(ax,root):
         return current
 
     # 초기 추정값 설정
-    Is_guess = current_values[0]
+    Is_guess = current_abs[0]
     n_guess = 1.0
     Vt_guess = 0.0256
     Ilinear_guess = 0.0
@@ -49,19 +50,24 @@ def plot_iv_data(ax,root):
         # 매개변수 및 데이터
         params, args=(voltage_values, current_values),
         # 알고리즘 변경
-        method='least squares'
+        method='least_squares'
     )
 
     # 적합된 값 얻기
     best_fit = np.abs(current_values) + result.residual
+
+    # 스플라인 피팅
+    spline = UnivariateSpline(voltage_values, current_abs, s=0)  # s 값은 필요에 따라 조절
 
     # R-squared 값 계산
     ss_residual = np.sum(result.residual ** 2)
     ss_total = np.sum(np.abs(current_values) - np.abs(np.mean(current_values)) ** 2)
     r_squared = 1 - (ss_residual / ss_total)
 
+
     # 데이터를 그래프에 그리기
     ax.scatter(voltage_values, np.abs(current_values), label='Original Data')
+    ax.plot(voltage_values, spline(voltage_values), color='blue', linestyle='--', label='Spline Fit')
     ax.plot(voltage_values, best_fit, color='red',
             label=f'Fitted Polynomial \n R-squared: {round(r_squared, 3)}')
     ax.set_yscale('log')  # y축 로그 스케일로 변경
