@@ -8,7 +8,7 @@ from src.flat_transmission import plot_flat_transmission_spectra
 import src.pandas_frame
 import numpy as np
 import warnings
-
+##응애응애
 # RankWarning 경고 무시
 warnings.simplefilter('ignore', np.RankWarning)
 
