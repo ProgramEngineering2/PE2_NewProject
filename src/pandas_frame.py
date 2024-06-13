@@ -205,6 +205,7 @@ def pandas_data():
                 current_text = iv_measurement_element.find('.//Current').text
                 voltage_values = [float(value) for value in voltage_text.split(',')]
                 current_values = [float(value) for value in current_text.split(',')]
+                current_abs=np.abs(current_values)
 
                 # 적합 실행 (알고리즘 변경)
                 def diode_equation(V, Is, n, Vt, V_linear, Ilinear):
@@ -217,7 +218,7 @@ def pandas_data():
                     return current
 
                 # 초기 추정값 설정
-                Is_guess = current_values[0]
+                Is_guess = current_abs[0]
                 n_guess = 1.0
                 Vt_guess = 0.0256
                 Ilinear_guess = 0.0
@@ -256,6 +257,19 @@ def pandas_data():
                 current_1V = np.abs(current_values[voltage_index_1V])
                 iatplusoneV_data[-1].append(current_1V)
 
+            # 리스트를 문자열로 변환하는 함수
+            def list_to_string(lst):
+                return ', '.join(map(str, lst))
+
+            # 변환된 데이터를 저장할 리스트
+            converted_ErrorFlag_data = [list_to_string(sublist) for sublist in ErrorFlag_data]
+            converted_Analysiswavelength_data = [list_to_string(sublist) for sublist in analysiswavelength_data]
+            converted_RsqOfRefSpectrum_data = [list_to_string(sublist) for sublist in RsqOfRefSpectrum_data]
+            converted_MaxtransmissionOfRefSpec_data = [list_to_string(sublist) for sublist in MaxtransmissionOfRefSpec_data]
+            converted_rsqofIV_data = [list_to_string(sublist) for sublist in rsqofIV_data]
+            converted_iatminusoneV_data = [list_to_string(sublist) for sublist in iatminusoneV_data]
+            converted_iatplusoneV_data = [list_to_string(sublist) for sublist in iatplusoneV_data]
+
         # 데이터프레임 생성
         df = pd.DataFrame({
             'Lot': lot_data,
@@ -268,14 +282,14 @@ def pandas_data():
             'Operator': operator_data,
             'Row': row_data,
             'Column': column_data,
-            'ErrorFlag': ErrorFlag_data,
+            'ErrorFlag': converted_ErrorFlag_data,
             'ErrorDescription': ErrorDescription_data,
-            'Analysis Wavelength': analysiswavelength_data,
-            'Rsq of Ref. spectrum (Nth)': RsqOfRefSpectrum_data,
-            'Max transmission of Ref. spec. (dB)': MaxtransmissionOfRefSpec_data,
-            'Rsq of IV': rsqofIV_data,
-            'I at -1V [A]': iatminusoneV_data,
-            'I at 1V [A]': iatplusoneV_data
+            'Analysis Wavelength': converted_Analysiswavelength_data,
+            'Rsq of Ref. spectrum (Nth)': converted_RsqOfRefSpectrum_data,
+            'Max transmission of Ref. spec. (dB)': converted_MaxtransmissionOfRefSpec_data,
+            'Rsq of IV': converted_rsqofIV_data,
+            'I at -1V [A]': converted_iatminusoneV_data,
+            'I at 1V [A]': converted_iatplusoneV_data
         })
 
         # 결과 데이터프레임을 리스트에 추가
