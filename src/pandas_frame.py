@@ -298,5 +298,21 @@ def pandas_data():
     # 모든 XML 파일에 대한 데이터프레임을 합치기
     final_df = pd.concat(dfs, ignore_index=True)
 
+    # 특정 열의 값을 실수 형태로 변환
+    for column in columns_to_convert:
+        if column in final_df.columns:
+            final_df[column] = pd.to_numeric(final_df[column], errors='coerce')
+
     # 결과 데이터프레임 반환
     return final_df
+
+# 변환할 열 리스트
+columns_to_convert = ['ErrorFlag',
+                      'AnotherColumn',
+                      'Row',
+                      'Column',
+                      'Rsq of Ref. spectrum (Nth)',
+                      'Max transmission of Ref. spec. (dB)',
+                      'Rsq of IV',
+                      'I at -1V [A]',
+                      'I at 1V [A]']
