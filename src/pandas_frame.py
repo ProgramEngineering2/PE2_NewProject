@@ -8,7 +8,9 @@ import warnings
 # RankWarning 경고 무시
 warnings.simplefilter('ignore', np.RankWarning)
 
-def pandas_data():
+from src.device_waferno_find_xml import find_xml_files
+
+def pandas_data(device, wafer_nos):
     # 여러 디렉토리 경로
     directories = [
         'dat/HY202103/D07/20190715_190855',
@@ -23,15 +25,8 @@ def pandas_data():
         'dat/HY202103/D24/20190531_151815',
         'dat/HY202103/D24/20190603_225101'
     ]
-
-    # 모든 XML 파일 경로를 담을 리스트
-    xml_files = []
-
-    # 각 디렉토리마다 'LMZ'가 들어가는 XML 파일만을 찾아서 리스트에 추가
-    for directory in directories:
-        file_list = os.listdir(directory)
-        xml_files.extend(
-            [os.path.join(directory, file) for file in file_list if 'LMZ' in file and file.endswith(".xml")])
+    # 필터링된 XML 파일 찾기
+    xml_files = find_xml_files(directories, device, wafer_nos)
 
     # 결과를 담을 빈 리스트 초기화
     dfs = []
@@ -316,3 +311,9 @@ columns_to_convert = ['ErrorFlag',
                       'Rsq of IV',
                       'I at -1V [A]',
                       'I at 1V [A]']
+
+def save_to_excel(df, directory, filename):
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    filepath = os.path.join(directory, filename)
+    df.to_excel(filepath, index=False)
