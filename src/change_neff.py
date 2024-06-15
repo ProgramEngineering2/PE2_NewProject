@@ -40,7 +40,7 @@ def plot_neff(ax, root):
 
     def transmission_intensity_model(length_values, n_eff, I0):
         k0 = 2 * np.pi / (np.array(length_values) * 1e-9)
-        return I0 * np.sin((k0 * l2_l1 * n_eff) / 2 )
+        return I0 * (np.sin(k0 * l2_l1 * n_eff * length_values)**2) / 2
 
     for dc_bias, length_values, measured_transmission_values in data_to_plot:
         transmission_fitting_values = transmission_intensity_model(length_values, true_n_eff, true_I0)
