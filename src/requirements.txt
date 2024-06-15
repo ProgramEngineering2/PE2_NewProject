@@ -1,0 +1,4 @@
+xml.etree.ElementTree
+lmfit
+numpy
+matplotlib
