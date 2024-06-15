@@ -6,6 +6,7 @@ from src.pandas_frame import pandas_data, save_to_excel
 from src.ref_transmission import plot_transmission_spectra
 from src.transmission import plot_transmission_spectra_all
 from src.device_waferno_find_xml import find_xml_files
+from src.change_neff import plot_neff
 import xml.etree.ElementTree as ET
 import matplotlib.pyplot as plt
 
@@ -26,9 +27,23 @@ def process_data(device, wafer_nos):
     ]
 
     # Excel 파일 저장
-    excel_directory = os.path.join('res', 'CSV')
-    final_df = pandas_data(device, wafer_nos)
-    save_to_excel(final_df, excel_directory, 'pandas.xlsx')
+
+    from datetime import datetime
+    # 현재 날짜와 시간 불러오기
+    now = datetime.now()
+    formatted_now = now.strftime("%Y%m%d_%H%M")
+
+    # excel 파일을 저장할 디렉토리 경로
+    excel_directory = os.path.join('res', 'CSV', formatted_now)
+    if not os.path.exists(excel_directory):
+        os.makedirs(excel_directory)
+
+    final_df = src.pandas_frame.pandas_data()
+    print(final_df)
+    excel_file_name = f'Analysis_Data_{formatted_now}.xlsx'
+    excel_file_path = os.path.join(excel_directory, excel_file_name)
+    final_df.to_excel(excel_file_path, index=False)
+
 
     # XML 파일 찾기
     xml_files = find_xml_files(directories, device, wafer_nos)
@@ -39,7 +54,7 @@ def process_data(device, wafer_nos):
     # 그래프 생성 및 저장
     jpgs_directory = os.path.join('res', 'jpgs')
     for xml_file in xml_files:
-        fig, axs = plt.subplots(2, 2, figsize=(15, 10))
+        fig, axs = plt.subplots(2, 3, figsize=(15, 10))
 
         tree = ET.parse(xml_file)
         root = tree.getroot()
@@ -47,18 +62,23 @@ def process_data(device, wafer_nos):
         plot_iv_data(axs[0, 0], root)
         plot_transmission_spectra(axs[0, 1], root)
         plot_transmission_spectra_all(axs[1, 0], root)
-        plot_flat_transmission_spectra(axs[1, 1], root)
+        plot_flat_transmission_spectra(axs[1, 2], root)
+        plot_neff(axs[1, 1], root)
+
+        # subplot 간의 간격 조정
+        plt.subplots_adjust(wspace=0.4, hspace=0.4)
+
 
         # 파일명에서 9번~12번 글자 추출
         filename = os.path.basename(xml_file)
         wafer_id = filename[9:12]
 
         # 파일 경로 설정
-        jpgs_wafer_directory = os.path.join(jpgs_directory, wafer_id)
+        jpgs_wafer_directory = os.path.join(jpgs_directory, wafer_id, formatted_now)
         if not os.path.exists(jpgs_wafer_directory):
             os.makedirs(jpgs_wafer_directory)
 
         # JPG 파일로 저장
-        jpg_filename = os.path.splitext(filename)[0] + '.jpg'
+        jpg_filename = os.path.splitext(filename)[0] + formatted_now +'.jpg'
         plt.savefig(os.path.join(jpgs_wafer_directory, jpg_filename))
         plt.close()  # 그래프 초기화
