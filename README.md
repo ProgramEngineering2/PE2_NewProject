@@ -1,7 +1,7 @@
 ## Index
 [Introduction](#Introduction)   
-[Structure of Package](#Structure of Package)   
-[how to use](#how to use)     
+[Structure of Package](#Structure)  
+[how to use](#Usage)     
 [Result](#Result)
 ***
 
@@ -21,7 +21,7 @@ For running a program, just only 'run.py' file should make the program run. - Ma
 
 
 
-## Structure of Package
+## Structure
 + dat : data files
 + doc : notebook (explaining how to use our package)
 + res : Show results(CSV, jpgs) 
@@ -39,7 +39,7 @@ For running a program, just only 'run.py' file should make the program run. - Ma
 + README：Documentation on development
 + run：main program (Processes data based on device and wafer numbers configurations, installs necessary modules, and generates graphs.)
 
-## how to use
+## Usage
 ### Library function required to execute code
 ```python
 import os
