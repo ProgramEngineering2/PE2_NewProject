@@ -290,6 +290,9 @@ def pandas_data(device, wafer_nos):
         # 결과 데이터프레임을 리스트에 추가
         dfs.append(df)
 
+    if not dfs:
+        raise ValueError(f"No objects to concatenate for device {device} and wafer {wafer_nos}")
+
     # 모든 XML 파일에 대한 데이터프레임을 합치기
     final_df = pd.concat(dfs, ignore_index=True)
 
