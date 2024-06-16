@@ -66,5 +66,5 @@ def plot_transmission_spectra(ax, root):
     ax.set_xlabel('Wavelength [nm]')
     ax.set_ylabel('Measured Transmission [dB]')
     ax.set_title(f'Transmission Spectra - Processed and fitting')
-    ax.legend(loc='lower left', bbox_to_anchor=(-0.5, -0.5), ncol=4, fontsize='small')
+    ax.legend(loc='lower left', bbox_to_anchor=(-0.1, -0.3), ncol=4, fontsize='small')
     ax.grid(True)
