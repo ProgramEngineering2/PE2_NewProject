@@ -11,11 +11,12 @@ import xml.etree.ElementTree as ET
 import matplotlib.pyplot as plt
 import numpy as np
 import warnings
+import openpyxl
+
 
 # RankWarning 경고 무시
 warnings.simplefilter('ignore', np.RankWarning)
 warnings.filterwarnings("ignore", "No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.", UserWarning)
-
 
 def process_data(device, wafer_nos):
 
@@ -39,9 +40,56 @@ def process_data(device, wafer_nos):
     now = datetime.now()
     formatted_now = now.strftime("%Y%m%d_%H%M")
 
-    excel_directory = os.path.join('res', 'CSV',formatted_now)
+    excel_directory = f'res/CSV/{formatted_now}' #엑셀파일이 들어가있는 디렉토리까지의 경로
     final_df = pandas_data(device, wafer_nos)
-    save_to_excel(final_df, excel_directory, f'Analysis_Data_{formatted_now}.xlsx')
+    save_to_excel(final_df, excel_directory, f'Analysis_Data_{formatted_now}.xlsx') #pandas data의 최종 결과 데이터 프레임을 엑셀 디렉토리 경로를 따라 filename으로 저장.
+    wb = openpyxl.load_workbook(os.path.join(excel_directory, f'Analysis_Data_{formatted_now}.xlsx'))
+    ws = wb.active
+
+    # XML 파일 찾기
+    xml_files = find_xml_files(directories, device, wafer_nos)
+    if not xml_files:
+        print("XML 파일을 찾을 수 없습니다.")
+        return
+
+    image_files = []
+    for i in range(len(xml_files)):
+        image_files.append('link')
+
+    # 권한 확인 함수
+    def check_permissions(file_path):
+        permissions = {
+            'exists': os.path.exists(file_path),
+            'readable': os.access(file_path, os.R_OK),
+            'writable': os.access(file_path, os.W_OK),
+            'executable': os.access(file_path, os.X_OK)
+        }
+        return permissions
+
+    jpgs_directory = os.path.join('res', 'jpgs')
+
+    # 하이퍼링크 추가
+    for row, jpg_file in zip(range(2, len(xml_files) + 2), image_files):
+        Lot = ws[f'A{row}'].value
+        Wafer = ws[f'B{row}'].value
+        Mask = ws[f'C{row}'].value
+        TestSite = ws[f'D{row}'].value
+        Row = ws[f'I{row}'].value
+        Column = ws[f'J{row}'].value
+        filename = f'{Lot}_{Wafer}_({Row},{Column})_{Mask}_{TestSite}.xml'
+        wafer_id = filename[9:12]
+        no_xml_name = os.path.splitext(filename)[0]
+        jpg_filename = os.path.splitext(filename)[0] + '.jpg'
+        cell = ws.cell(row=row, column=19)  # 두 번째 열에 하이퍼링크 추가
+        jpg_file = jpg_filename  # 이미지 파일명 예시
+        file_path = os.path.join(jpgs_directory, wafer_id, formatted_now, jpg_filename)
+        absolute_path = os.path.abspath(file_path)
+        cell.hyperlink = absolute_path
+        cell.value = 'link'  # 하이퍼링크 표시 텍스트
+        cell.style = "Hyperlink"
+
+    # 엑셀 파일 저장
+    wb.save(os.path.join(excel_directory, f'Analysis_Data_{formatted_now}.xlsx'))
 
     # XML 파일 찾기
     xml_files = find_xml_files(directories, device, wafer_nos)

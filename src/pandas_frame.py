@@ -3,7 +3,6 @@ import xml.etree.ElementTree as ET
 import pandas as pd
 import lmfit
 import numpy as np
-#
 import warnings
 # RankWarning 경고 무시
 warnings.simplefilter('ignore', np.RankWarning)
@@ -56,6 +55,7 @@ def pandas_data(device, wafer_nos):
         rsqofIV_data = []
         iatminusoneV_data = []
         iatplusoneV_data = []
+        image_link=[]
 
         # 각 die에 대한 정보 반복
         for testsiteinfo in root.findall('.//TestSiteInfo'):
@@ -252,6 +252,8 @@ def pandas_data(device, wafer_nos):
                 current_1V = np.abs(current_values[voltage_index_1V])
                 iatplusoneV_data[-1].append(current_1V)
 
+            image_link.append([])
+
             # 리스트를 문자열로 변환하는 함수
             def list_to_string(lst):
                 return ', '.join(map(str, lst))
@@ -264,6 +266,7 @@ def pandas_data(device, wafer_nos):
             converted_rsqofIV_data = [list_to_string(sublist) for sublist in rsqofIV_data]
             converted_iatminusoneV_data = [list_to_string(sublist) for sublist in iatminusoneV_data]
             converted_iatplusoneV_data = [list_to_string(sublist) for sublist in iatplusoneV_data]
+            converted_image_link = [list_to_string(sublist) for sublist in image_link]
 
         # 데이터프레임 생성
         df = pd.DataFrame({
@@ -284,7 +287,8 @@ def pandas_data(device, wafer_nos):
             'Max transmission of Ref. spec. (dB)': converted_MaxtransmissionOfRefSpec_data,
             'Rsq of IV': converted_rsqofIV_data,
             'I at -1V [A]': converted_iatminusoneV_data,
-            'I at 1V [A]': converted_iatplusoneV_data
+            'I at 1V [A]': converted_iatplusoneV_data,
+            'Image Link': converted_image_link
         })
 
         # 결과 데이터프레임을 리스트에 추가
@@ -310,8 +314,8 @@ columns_to_convert = ['ErrorFlag',
                       'Max transmission of Ref. spec. (dB)',
                       'Rsq of IV',
                       'I at -1V [A]',
-                      'I at 1V [A]']
-
+                      'I at 1V [A]',
+                      'Image link']
 def save_to_excel(df, directory, filename):
     if not os.path.exists(directory):
         os.makedirs(directory)
