@@ -2,14 +2,25 @@
 /shelf/
 /workspace.xml
 
-# Ignore dat directory
-/HY202103/D07/
-/HY202103/D08/
-/HY202103/D23/
-/HY202103/D24/
+# Ignore all files in the dat directory
+dat/*
 
+# But keep the .gitkeep file
+!dat/.gitkeep
 
-# Ignore pycache file and vscode file
+# We keep the dat directory because it is required by the project structure.
+# The directory is meant to store raw data files which are currently not available.
+
+# Ignore all files in the res directory
+res/*
+
+# But keep the .gitkeep file
+!res/.gitkeep
+
+# We keep the res directory because it is required by the project structure.
+# The directory is meant to store raw data files which are currently not available but will be added later during the program running.
+
+# Ignore pycache files and vscode files
 */__pycache__/*
 .vscode
 /.idea/
