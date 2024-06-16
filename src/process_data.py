@@ -6,7 +6,6 @@ from src.pandas_frame import pandas_data, save_to_excel
 from src.ref_transmission import plot_transmission_spectra
 from src.transmission import plot_transmission_spectra_all
 from src.device_waferno_find_xml import find_xml_files
-from src.change_neff import plot_neff
 import xml.etree.ElementTree as ET
 import matplotlib.pyplot as plt
 import numpy as np
@@ -100,7 +99,7 @@ def process_data(device, wafer_nos):
     # 그래프 생성 및 저장
     jpgs_directory = os.path.join('res', 'jpgs')
     for xml_file in xml_files:
-        fig, axs = plt.subplots(2, 3, figsize=(15, 10))
+        fig, axs = plt.subplots(2, 2, figsize=(15, 10))
 
         tree = ET.parse(xml_file)
         root = tree.getroot()
@@ -109,7 +108,7 @@ def process_data(device, wafer_nos):
         plot_transmission_spectra(axs[0, 1], root)
         plot_transmission_spectra_all(axs[1, 0], root)
         plot_flat_transmission_spectra(axs[1, 1], root)
-        plot_neff(axs[0,2], root)
+
 
         # subplot 간의 간격 조정
         plt.subplots_adjust(wspace=0.4, hspace=0.4)
