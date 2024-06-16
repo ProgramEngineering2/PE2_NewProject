@@ -109,11 +109,18 @@ def install_missing_modules(filename='requirements.txt'):
         print(f"파일 '{abs_file_path}'을(를) 찾을 수 없습니다. 패키지 설치를 스킵합니다.")
 ```
 
+Then, you can modify the file you want to analyze by editing the code of 'run.py' like this.
+
+```python
+def main():
+    device = 'ALL'  # 디바이스 설정('LMZC', 'LMZO', 'ALL') *대소문자 구별X
+    wafer_nos = 'D23'  # 웨이퍼 번호 설정 ('D07', 'D08', 'D23', 'D24', 'ALL')
+```
+
+Finally, CSV file of analysis data and graphs will be saved automatically.
+The stored analysis files are saved based on the time of storage, so previous analysis files are not deleted.
 
 
-## Result
-
-![img.png](img.png)
 
 ***
 
