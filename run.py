@@ -8,8 +8,12 @@ def main():
     # 필요한 경우 모듈 설치
     install_missing_modules('requirements.txt')
 
-    # 데이터 처리 및 그래프 생성
-    process_data(device, wafer_nos)
+    try:
+        # 데이터 처리 및 그래프 생성
+        process_data(device, wafer_nos)
+    except ValueError as e:
+        print(e)
+
 
 if __name__ == "__main__":
     main()
