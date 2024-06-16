@@ -122,12 +122,14 @@ def main():
 ```
 
 Finally, CSV file of analysis data and graphs will be saved automatically.
-The stored analysis files are saved based on the time of storage, so previous analysis files are not deleted.
+The stored analysis files are saved based on the time of storage, so previous analysis files are not deleted.  
 
+![saved files](https://github.com/nayoujin2002/programing_fic/blob/main/%EC%A0%80%EC%9E%A5.PNG)
 
 
 ***
 
 ## Result
 
-![img.png](img.png)
+![Example of Analysis data CSV](https://github.com/nayoujin2002/programing_fic/blob/main/%EC%BA%A1%EC%B2%98.PNG)
+![Example of Analysis graph](https://github.com/nayoujin2002/programing_fic/blob/main/HY202103_D07_(0%2C0)_LION1_DCM_LMZC.jpg)
